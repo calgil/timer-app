@@ -1,34 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [timeElapsed, setTimeElapsed] = useState(null);
+  const [running, setRunning] = useState(false);
+  const [startTime, setStartTime] = useState(0);
+
+  const minutes = Math.floor(timeElapsed / 60000);
+  const seconds = ((timeElapsed % 60000) / 1000).toFixed(0);
+  const milliseconds = (timeElapsed % 1000).toFixed(0).slice(0, 2);
+
+  const handleReset = () => {
+    setTimeElapsed(null);
+    setRunning(false);
+    setStartTime(0);
+  };
+
+  const handleStart = () => {
+    setRunning(true);
+    setStartTime(Date.now());
+  };
+
+  const handleStop = () => {
+    setRunning(false);
+  };
+
+  useEffect(() => {
+    let interval;
+    if (running) {
+      interval = setInterval(() => {
+        setTimeElapsed(Date.now() - startTime);
+      }, 10);
+    } else if (!running) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [running]);
 
   return (
     <div className="App">
+      <h1>Timer</h1>
+      <div className="display-time">
+        <span className="time">{minutes < 10 ? `0${minutes}` : minutes}</span>:
+        <span className="time">{seconds < 10 ? `0${seconds}` : seconds}</span>:
+        <span className="time">
+          {milliseconds < 10 ? `0${milliseconds}` : milliseconds}
+        </span>
+      </div>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <button onClick={handleStart}>Start</button>
+        <button onClick={handleStop}>Stop</button>
+        <button onClick={handleReset}>Reset</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

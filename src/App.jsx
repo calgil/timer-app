@@ -5,6 +5,7 @@ function App() {
   const [timeElapsed, setTimeElapsed] = useState(null);
   const [running, setRunning] = useState(false);
   const [startTime, setStartTime] = useState(0);
+  const [pauseTime, setPauseTime] = useState(null);
 
   const minutes = Math.floor(timeElapsed / 60000);
   const seconds = ((timeElapsed % 60000) / 1000).toFixed(0);
@@ -17,12 +18,15 @@ function App() {
   };
 
   const handleStart = () => {
+    if (!timeElapsed) {
+      setStartTime(Date.now());
+    }
     setRunning(true);
-    setStartTime(Date.now());
   };
 
   const handleStop = () => {
     setRunning(false);
+    setPauseTime(Date.now());
   };
 
   useEffect(() => {

@@ -15,13 +15,16 @@ function App() {
     setTimeElapsed(null);
     setRunning(false);
     setStartTime(0);
+    setPauseTime(null);
   };
 
   const handleStart = () => {
-    if (!timeElapsed) {
-      setStartTime(Date.now());
-    }
     setRunning(true);
+    if (pauseTime) {
+      const pauseDuration = Date.now() - pauseTime;
+      return setStartTime(startTime + pauseDuration);
+    }
+    setStartTime(Date.now());
   };
 
   const handleStop = () => {
